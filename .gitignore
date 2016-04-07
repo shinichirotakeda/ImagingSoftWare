@@ -1,5 +1,7 @@
 *~
 .DS_Store
+*.o
+MkDICOM3.6.1/makedicom
 MkDICOM3.6.1/example/COMPTON
 MkDICOM3.6.1/mouse/COMPTON
 MkDICOM3.6.1/mouse/dicom364

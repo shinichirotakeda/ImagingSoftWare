@@ -36,7 +36,7 @@ void MkDICOM::Init(){
   std::ostringstream year;
   year << std::setfill('0') << std::setw(6) << 1900+pnow->tm_year;
   std::ostringstream mon;
-  mon << std::setfill('0') << std::setw(2) << pnow->tm_mon;
+  mon << std::setfill('0') << std::setw(2) << pnow->tm_mon +1;
   std::ostringstream day;
   day << std::setfill('0') << std::setw(2) << pnow->tm_mday;
   std::ostringstream hour;
@@ -338,7 +338,7 @@ void MkDICOM::Add0008Tag(ofstream *f,const ChartStack *s)
   std::ostringstream year;
   year << std::setfill('0') << std::setw(4) << 1900+pnow->tm_year;
   std::ostringstream mon;
-  mon << std::setfill('0') << std::setw(2) << pnow->tm_mon;
+  mon << std::setfill('0') << std::setw(2) << pnow->tm_mon + 1;
   std::ostringstream day;
   day << std::setfill('0') << std::setw(2) << pnow->tm_mday;
   std::ostringstream hour;

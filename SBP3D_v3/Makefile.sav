@@ -1,0 +1,29 @@
+TARGET        = sbp3d_v3
+#OBJECTS       = LMEMMLComptonImaging.o TwoHitComptonEvent.o OneEventResponse.o 
+
+OBJECTS = SBPComptonImaging.o TwoHitComptonEvent.o OneEventResponse.o 
+
+
+##############################################################################
+
+include $(G4ANLDIR)/config/g4anlmake.gmk
+include $(G4ANLDIR)/config/externalsoft.gmk
+
+##############################################################################
+
+
+##############################################################################
+
+all: $(TARGET)
+
+.cc.o:
+	$(CXX) -O2 $(CXXFLAGS) -c $< -I. \
+	-I$(COM_CLI_INC) -I$(BNKEVS_INC) $(ROOTCFLAGS)
+
+$(TARGET) : %: %.o $(OBJECTS)
+	$(CXX) -bind_at_load -o $@ $^ \
+	$(ROOTLIBS) $(ANLPLUS_LIB) $(COM_CLI_LNK) $(BNKEVS_LIB) $(SYSLIB)
+
+clean:
+	@rm -f $(TARGET) *.o *~ 
+

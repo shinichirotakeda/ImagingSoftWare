@@ -32,31 +32,31 @@ void ImageFactory::Init(TApplication *app)
   theApp = app;
 }
 
-void ImageFactory::SetInitImage(TH2D *his)
+void ImageFactory::SetInitImage(TH2F *his)
 {
   orgimage = his;
-  fft_orgimage = new TH2D("FFTPower","FFTPower",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
-  fft_realpart = new TH2D("FFTREAL","FFTREAL",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
-  fft_impart = new TH2D("FFTIM","FFTIM",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
-  filtered_image = new TH2D("FilteredImage","Filtered Image",NBINX,orgimage->GetXaxis()->GetXmin(),orgimage->GetXaxis()->GetXmax(),
+  fft_orgimage = new TH2F("FFTPower","FFTPower",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  fft_realpart = new TH2F("FFTREAL","FFTREAL",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  fft_impart = new TH2F("FFTIM","FFTIM",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  filtered_image = new TH2F("FilteredImage","Filtered Image",NBINX,orgimage->GetXaxis()->GetXmin(),orgimage->GetXaxis()->GetXmax(),
 			    NBINY,orgimage->GetYaxis()->GetXmin(),orgimage->GetYaxis()->GetXmax());
 
-  lowpassfilter = new TH2D("lowpassfilter","lowpassfilter",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
-  highpassfilter = new TH2D("highpassfilter","highpassfilter",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
-  bandpassfilter = new TH2D("bandpassfilter","bandpassfilter",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  lowpassfilter = new TH2F("lowpassfilter","lowpassfilter",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  highpassfilter = new TH2F("highpassfilter","highpassfilter",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  bandpassfilter = new TH2F("bandpassfilter","bandpassfilter",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
 
-  power = new TH2D("power","power",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  power = new TH2F("power","power",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
 
   //  powerspectrum = new TH1D("powerspectrum","powerspectrum",100,0,100);
 
 }
 
-void ImageFactory::SetPsfImage(TH2D *his)
+void ImageFactory::SetPsfImage(TH2F *his)
 {
   psf  = his;
-  psf_fft = new TH2D("PSFPower","PSFPower",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
-  psf_realpart = new TH2D("PSFREAL","PSFREAL",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
-  psf_impart = new TH2D("PSFIM","PSFTIM",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  psf_fft = new TH2F("PSFPower","PSFPower",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  psf_realpart = new TH2F("PSFREAL","PSFREAL",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
+  psf_impart = new TH2F("PSFIM","PSFTIM",NBINX,-NBINX/2,NBINX/2,NBINY,-NBINY/2,NBINY/2);
 
 }
 
@@ -121,7 +121,7 @@ void ImageFactory::Run()
 void ImageFactory::Print()
 {
   std::cout << "Print ......." << std::endl;
-  palette_b(false);
+  palette_rainbow(false);
 
   c1->cd(1);
   orgimage->Draw("colz");
@@ -199,11 +199,11 @@ bool ImageFactory::FFT2()
     return false;
   }
 
-  double norm,max;
-  // double data;
+  float norm,max;
+  // float data;
 
-  double a_rl[NBINY][NBINX];
-  double a_im[NBINY][NBINX];
+  float a_rl[NBINY][NBINX];
+  float a_im[NBINY][NBINX];
 
   for(int i=1;i<=n_ybin;i++){
     for(int j=1;j<=n_xbin;j++){
@@ -211,9 +211,7 @@ bool ImageFactory::FFT2()
       a_im[i-1][j-1] = 0.;
     }
   }
-
   FFT2core(a_rl,a_im,1);
-
   max = 0.;
   for(int i=0;i<NBINY;i++){
     for(int j=0;j<NBINX;j++){
@@ -239,8 +237,8 @@ bool ImageFactory::FFT2()
 bool ImageFactory::FFT2Inv()
 {
 
-  double a_rl[NBINY][NBINX];
-  double a_im[NBINY][NBINX];
+  float a_rl[NBINY][NBINX];
+  float a_im[NBINY][NBINX];
 
   for(int i=1;i<=NBINY;i++){
     for(int j=1;j<=NBINX;j++){
@@ -264,14 +262,14 @@ bool ImageFactory::FFT2Inv()
 bool ImageFactory::FFT2LowPassFilter()
 {
 
-  double range = (double ) NBINX/2/2;
+  float range = (float ) NBINX/2/2;
   CLread("Filter Range (Default is NBINX/4) ", &range);
 
   for(int i=1;i<=NBINX;i++){
     for(int j=1;j<=NBINX;j++){
-      double xcenter = lowpassfilter->GetXaxis()->GetBinCenter(i);
-      double ycenter = lowpassfilter->GetYaxis()->GetBinCenter(j);
-      double distance = TMath::Sqrt(xcenter*xcenter + ycenter*ycenter);
+      float xcenter = lowpassfilter->GetXaxis()->GetBinCenter(i);
+      float ycenter = lowpassfilter->GetYaxis()->GetBinCenter(j);
+      float distance = TMath::Sqrt(xcenter*xcenter + ycenter*ycenter);
       if(distance <= range){
 	lowpassfilter-> SetBinContent(i,j,1.0);
       }else{
@@ -281,8 +279,8 @@ bool ImageFactory::FFT2LowPassFilter()
   }
 
 
-  double a_rl[NBINY][NBINX];
-  double a_im[NBINY][NBINX];
+  float a_rl[NBINY][NBINX];
+  float a_im[NBINY][NBINX];
 
   for(int i=1;i<=NBINY;i++){
     for(int j=1;j<=NBINX;j++){
@@ -305,14 +303,14 @@ bool ImageFactory::FFT2LowPassFilter()
 bool ImageFactory::FFT2HighPassFilter()
 {
 
- double range = (double ) NBINX/2/2;
+ float range = (float ) NBINX/2/2;
   CLread("Filter Range (Default is NBINX/4) ", &range);
 
   for(int i=1;i<=NBINX;i++){
     for(int j=1;j<=NBINX;j++){
-      double xcenter = lowpassfilter->GetXaxis()->GetBinCenter(i);
-      double ycenter = lowpassfilter->GetYaxis()->GetBinCenter(j);
-      double distance = TMath::Sqrt(xcenter*xcenter + ycenter*ycenter);
+      float xcenter = lowpassfilter->GetXaxis()->GetBinCenter(i);
+      float ycenter = lowpassfilter->GetYaxis()->GetBinCenter(j);
+      float distance = TMath::Sqrt(xcenter*xcenter + ycenter*ycenter);
       if(distance >= range){
 	highpassfilter-> SetBinContent(i,j,1.0);
       }else{
@@ -322,8 +320,8 @@ bool ImageFactory::FFT2HighPassFilter()
   }
 
 
-  double a_rl[NBINY][NBINX];
-  double a_im[NBINY][NBINX];
+  float a_rl[NBINY][NBINX];
+  float a_im[NBINY][NBINX];
 
   for(int i=1;i<=NBINY;i++){
     for(int j=1;j<=NBINX;j++){
@@ -347,17 +345,17 @@ bool ImageFactory::FFT2HighPassFilter()
 bool ImageFactory::FFT2BandPassFilter()
 {
 
-  double ld = (double ) NBINX/32;
+  float ld = (float ) NBINX/32;
   CLread("Filter Range LD (Default is NBINX/32) ", &ld);
 
-  double ud = (double ) NBINX/8;
+  float ud = (float ) NBINX/8;
   CLread("Filter Range UD (Default is NBINX/8) ", &ud);
 
   for(int i=1;i<=NBINX;i++){
     for(int j=1;j<=NBINX;j++){
-      double xcenter = bandpassfilter->GetXaxis()->GetBinCenter(i);
-      double ycenter = bandpassfilter->GetYaxis()->GetBinCenter(j);
-      double distance = TMath::Sqrt(xcenter*xcenter + ycenter*ycenter);
+      float xcenter = bandpassfilter->GetXaxis()->GetBinCenter(i);
+      float ycenter = bandpassfilter->GetYaxis()->GetBinCenter(j);
+      float distance = TMath::Sqrt(xcenter*xcenter + ycenter*ycenter);
       if(distance >= ld && ud >= distance){
 	bandpassfilter-> SetBinContent(i,j,1.0);
       }else{
@@ -367,8 +365,8 @@ bool ImageFactory::FFT2BandPassFilter()
   }
 
 
-  double a_rl[NBINY][NBINX];
-  double a_im[NBINY][NBINX];
+  float a_rl[NBINY][NBINX];
+  float a_im[NBINY][NBINX];
 
   for(int i=1;i<=NBINY;i++){
     for(int j=1;j<=NBINX;j++){
@@ -400,10 +398,10 @@ bool ImageFactory::FFT2Deconvolved()
     return false;
   }
 
-  double norm,max;
+  float norm,max;
 
-  double a_rl[NBINY][NBINX];
-  double a_im[NBINY][NBINX];
+  float a_rl[NBINY][NBINX];
+  float a_im[NBINY][NBINX];
 
   for(int i=1;i<=n_ybin;i++){
     for(int j=1;j<=n_xbin;j++){
@@ -437,15 +435,15 @@ bool ImageFactory::FFT2Deconvolved()
   
 
 
-  double aa_rl[NBINY][NBINX];
-  double aa_im[NBINY][NBINX];
+  float aa_rl[NBINY][NBINX];
+  float aa_im[NBINY][NBINX];
 
-  double ld = 0.;
-  double ud  =10.;
+  float ld = 0.;
+  float ud  =10.;
   CLread("LD is ",&ld);
   CLread("UD is ",&ud);
 
-  double cutoff = 6.0;
+  float cutoff = 6.0;
   CLread("Cut off is  ",&cutoff);
 
   int n_zi = 3;
@@ -457,17 +455,17 @@ bool ImageFactory::FFT2Deconvolved()
   for(int i=1;i<=NBINY;i++){
     for(int j=1;j<=NBINX;j++){
 
-      double a = fft_realpart->GetBinContent(j,i);
-      double b = fft_impart->GetBinContent(j,i);
+      float a = fft_realpart->GetBinContent(j,i);
+      float b = fft_impart->GetBinContent(j,i);
 
-      double ppp = TMath::Power(a,2)+ TMath::Power(b,2);
-      double k =  TMath::Sqrt( TMath::Power (NBINX/2 -j,2) + TMath::Power(NBINY/2 -i ,2));
+      float ppp = TMath::Power(a,2)+ TMath::Power(b,2);
+      float k =  TMath::Sqrt( TMath::Power (NBINX/2 -j,2) + TMath::Power(NBINY/2 -i ,2));
 
       x_reg1.push_back(k);
       y_reg1.push_back(ppp);
 
-      double c = psf_realpart->GetBinContent(j,i);
-      double d = psf_impart->GetBinContent(j,i);
+      float c = psf_realpart->GetBinContent(j,i);
+      float d = psf_impart->GetBinContent(j,i);
 
       if(k<ud){
 	if(c*c+d*d!=0.){
@@ -483,7 +481,7 @@ bool ImageFactory::FFT2Deconvolved()
 	aa_im[i-1][j-1] =0;
       }
 
-      double factor = filt->Eval(k);
+      float factor = filt->Eval(k);
 
       aa_rl[i-1][j-1] = aa_rl[i-1][j-1] * factor;
       aa_im[i-1][j-1] = aa_im[i-1][j-1] * factor;
@@ -501,8 +499,8 @@ bool ImageFactory::FFT2Deconvolved()
   
   delete filt;
 
-  double *x_reg1_pointer =&(x_reg1.at(0));
-  double *y_reg1_pointer =&(y_reg1.at(0));
+  float *x_reg1_pointer =&(x_reg1.at(0));
+  float *y_reg1_pointer =&(y_reg1.at(0));
   powerspectrum = new TGraph(x_reg1.size(),x_reg1_pointer,y_reg1_pointer);
 
   FFT2core(aa_rl,aa_im,-1);
@@ -518,19 +516,21 @@ bool ImageFactory::FFT2Deconvolved()
 }
 
 
-void ImageFactory::FFT2core(double a_rl[NBINY][NBINX], double a_im[NBINY][NBINX],int inv)
+void ImageFactory::FFT2core(float a_rl[NBINY][NBINX], float a_im[NBINY][NBINX],int inv)
 {
 
-  double Xsin_tbl[NBINX];
-  double Xcos_tbl[NBINX];
-  double Ysin_tbl[NBINY];
-  double Ycos_tbl[NBINY];
 
-  double b_rl[NBINX][NBINY];
-  double b_im[NBINX][NBINY];
+  float Xsin_tbl[NBINX];
+  float Xcos_tbl[NBINX];
+  float Ysin_tbl[NBINY];
+  float Ycos_tbl[NBINY];
 
-  double buf_x[NBINX];
-  double buf_y[NBINY];
+  float b_rl[NBINX][NBINY];
+  float b_im[NBINX][NBINY];
+
+  float buf_x[NBINX];
+  float buf_y[NBINY];
+
 
   cstb(NBINX,inv,Xsin_tbl,Xcos_tbl);
   cstb(NBINY,inv,Ysin_tbl,Ycos_tbl);
@@ -540,6 +540,7 @@ void ImageFactory::FFT2core(double a_rl[NBINY][NBINX], double a_im[NBINY][NBINX]
   for(int i=0;i<NBINY;i++){
     FFT1core(&a_rl[i][0],&a_im[i][0],NBINX,X_EXP,Xsin_tbl,Xcos_tbl,buf_x);
   }
+
 
   rvmtx1(a_rl,b_rl,NBINX,NBINY);
   rvmtx1(a_im,b_im,NBINX,NBINY);
@@ -556,11 +557,11 @@ void ImageFactory::FFT2core(double a_rl[NBINY][NBINX], double a_im[NBINY][NBINX]
 }
 
 
-void ImageFactory::cstb(int length, int inv, double *sin_tbl, double *cos_tbl)
+void ImageFactory::cstb(int length, int inv, float *sin_tbl, float *cos_tbl)
 {
 
-  double xx, arg;
-  xx = -TMath::Pi() * 2.0 /(double)length;
+  float xx, arg;
+  xx = -TMath::Pi() * 2.0 /(float)length;
 
   if(inv < 0) xx = -xx;
   for(int i=0;i<length;i++){
@@ -572,13 +573,13 @@ void ImageFactory::cstb(int length, int inv, double *sin_tbl, double *cos_tbl)
 
 }
 
-void ImageFactory::FFT1core(double *a_rl, double *a_im,
+void ImageFactory::FFT1core(float *a_rl, float *a_im,
 			    int length, int ex,
-			    double *sin_tbl, double *cos_tbl,double *buf)
+			    float *sin_tbl, float *cos_tbl,float *buf)
 {
   int i,j,k,w,j1,j2;
   int numb, lenb, timb;
-  double xr,xi,yr,yi,nrml;
+  float xr,xi,yr,yi,nrml;
 
   if(OPT == 1){
     for(i=1;i<length;i+=2){
@@ -622,7 +623,7 @@ void ImageFactory::FFT1core(double *a_rl, double *a_im,
       a_im[i] = -a_im[i];
     }
   }
-  nrml = 1.0 / TMath::Sqrt((double)length);
+  nrml = 1.0 / TMath::Sqrt((float)length);
   for(i=0;i<length;i++){
     a_rl[i] *= nrml;
     a_im[i] *= nrml;
@@ -630,7 +631,7 @@ void ImageFactory::FFT1core(double *a_rl, double *a_im,
 
 }
 
-void ImageFactory::birv(double *a,int length,int ex,double *b)
+void ImageFactory::birv(float *a,int length,int ex,float *b)
 {
 
   int i,ii,k,bit;
@@ -647,7 +648,7 @@ void ImageFactory::birv(double *a,int length,int ex,double *b)
 
 }
 
-void ImageFactory::rvmtx1(double a[NBINY][NBINX],double b[NBINX][NBINY],int xsize,int ysize)
+void ImageFactory::rvmtx1(float a[NBINY][NBINX],float b[NBINX][NBINY],int xsize,int ysize)
 {
 
   int i,j;
@@ -662,7 +663,7 @@ void ImageFactory::rvmtx1(double a[NBINY][NBINX],double b[NBINX][NBINY],int xsiz
 }
 
 
-void ImageFactory::rvmtx2(double a[NBINX][NBINY],double b[NBINY][NBINX],int xsize,int ysize)
+void ImageFactory::rvmtx2(float a[NBINX][NBINY],float b[NBINY][NBINX],int xsize,int ysize)
 {
 
   int i,j;
@@ -754,3 +755,86 @@ void ImageFactory::palette_b(bool yesorno){
 
 }
 
+
+void ImageFactory::palette_rainbow(bool yesorno)
+{
+  
+  const Int_t colNum = 5000;
+  Int_t palette[colNum];
+  for(Int_t i=0; i<colNum; i++)
+    {
+
+      Float_t red;
+      Float_t green;
+      Float_t blue;
+
+      if(i<2000)
+        {
+          blue = 1.0;
+        }
+      else if(i<3000)
+        {
+          blue = 1.0 - (Float_t)(i-2000)/1000.;
+        }
+      else
+        {
+          blue = 0.0;
+        }
+      
+      if(i<1000)
+        {
+          red = 1.0 - (Float_t)i/1000.;
+        }
+      else if(i<3000)
+        {
+          red = 0.0;
+        }
+      else if(i<4000)
+        {
+          red = (Float_t)(i-3000)/1000.;
+        }
+      else
+        {
+          red = 1.0;
+        }
+
+      if(i<1000)
+        {
+          green = 0.0;
+        }
+      else if(i<2000)
+        {
+          green = (Float_t)(i-1000)/1000.;
+        }
+      else if(i<4000)
+        {
+          green = 1.0;
+        }
+      else
+        {
+          green = 1.0 - (Float_t)(i-4000)/1000.;
+        }
+
+      if(! gROOT->GetColor(230+i))
+        {
+          TColor* color = new TColor(230+i, red, green, blue, "");
+        }
+      else
+        {
+          TColor* color = gROOT->GetColor(230+i);
+          color->SetRGB(red, green, blue);
+        }
+
+      if(yesorno)
+        {
+          palette[i] = 230 + colNum - i;
+        }
+      else
+        {
+          palette[i] = 230 + i;
+        }
+    }
+
+  gStyle->SetPalette(colNum, palette);
+
+}

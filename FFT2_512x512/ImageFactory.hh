@@ -25,34 +25,34 @@ private:
   const static int X_EXP = 9;
   const static int Y_EXP = 9;
 
-  TH2D *orgimage;
-  TH2D *fft_orgimage;
-  TH2D *fft_realpart;
-  TH2D *fft_impart;
-  TH2D *filtered_image;
+  TH2F *orgimage;
+  TH2F *fft_orgimage;
+  TH2F *fft_realpart;
+  TH2F *fft_impart;
+  TH2F *filtered_image;
 
-  TH2D *lowpassfilter;
-  TH2D *highpassfilter;
-  TH2D *bandpassfilter;
+  TH2F *lowpassfilter;
+  TH2F *highpassfilter;
+  TH2F *bandpassfilter;
 
-  TH2D *psf;
-  TH2D *psf_fft;
-  TH2D *psf_realpart;
-  TH2D *psf_impart;
+  TH2F *psf;
+  TH2F *psf_fft;
+  TH2F *psf_realpart;
+  TH2F *psf_impart;
 
-  TH2D *power;
+  TH2F *power;
   //  TH1D *powerspectrum;
   TGraph *powerspectrum;
-  std::vector<double> x_reg1,y_reg1;
-  //  double *x_reg1_pointer;
-  //  double *y_reg1_pointer;
+  std::vector<float> x_reg1,y_reg1;
+  //  float *x_reg1_pointer;
+  //  float *y_reg1_pointer;
   bool flag;
 
 public:
 
   void Init(TApplication *app);  
-  void SetInitImage(TH2D *his);
-  void SetPsfImage(TH2D *his);
+  void SetInitImage(TH2F *his);
+  void SetPsfImage(TH2F *his);
   void Run();
   void Save(TDirectory *dir);
 
@@ -65,16 +65,17 @@ private:
   bool FFT2BandPassFilter();
   bool FFT2Deconvolved();
 
-  void FFT2core(double a_rl[NBINY][NBINX], double a_im[NBINY][NBINX],int inv);
-  void FFT1core(double *a_rl, double *a_im,
+  void FFT2core(float a_rl[NBINY][NBINX], float a_im[NBINY][NBINX],int inv);
+  void FFT1core(float *a_rl, float *a_im,
 		int length, int ex,
-		double *sin_tbl, double *cos_tbl ,double *buf);
-  void cstb(int length, int inv, double *sin_tbl, double *cos_tbl);
-  void birv(double *a,int length,int ex,double *b);
-  void rvmtx1(double a[NBINY][NBINX],double b[NBINX][NBINY],int xsize,int ysize);
-  void rvmtx2(double a[NBINX][NBINY],double b[NBINY][NBINX],int xsize,int ysize);
+		float *sin_tbl, float *cos_tbl ,float *buf);
+  void cstb(int length, int inv, float *sin_tbl, float *cos_tbl);
+  void birv(float *a,int length,int ex,float *b);
+  void rvmtx1(float a[NBINY][NBINX],float b[NBINX][NBINY],int xsize,int ysize);
+  void rvmtx2(float a[NBINX][NBINY],float b[NBINY][NBINX],int xsize,int ysize);
 
   void palette_b(bool yesorno);
+  void palette_rainbow(bool yesorno);
   void Print();
   TApplication *theApp;
   

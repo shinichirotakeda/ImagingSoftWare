@@ -27,7 +27,7 @@ int main(int argc, char **argv){
   
   std::string h_name="image";
   CLread("IMAGE NAME ? ", &h_name);
-  TH2D *orgimage = (TH2D *)fin->Get(h_name.c_str());
+  TH2F *orgimage = (TH2F *)fin->Get(h_name.c_str());
   
   std::string name_psf="psf.root";
   CLread("PSF FILE NAME ? ", &name_psf);
@@ -35,7 +35,7 @@ int main(int argc, char **argv){
   
   std::string psf_name="psf";
   CLread("PSF NAME ? ", &psf_name);
-  TH2D *psf = (TH2D *)fpsf->Get(psf_name.c_str());
+  TH2F *psf = (TH2F *)fpsf->Get(psf_name.c_str());
 
   std::string n_fout = "output.root";
   CLread("OUTPUT ROOT FILE NAME ?",&n_fout);
